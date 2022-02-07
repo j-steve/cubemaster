@@ -47,6 +47,11 @@ class Pixel(object):
     def __str__(self):
         return self.color.name[0]
 
+    def __eq__(self, other):
+        if isinstance(other, Pixel):
+            return self.color == other.color
+        return False
+
 
 def _invert_offset(offset):
     if offset == 0:
@@ -159,3 +164,12 @@ class Face(object):
 
     def get_print_row(self, row_num: int):
         return str(self.rows[row_num][0]) + str(self.rows[row_num][1]) + str(self.rows[row_num][2])
+
+    def __eq__(self, other):
+        if isinstance(other, Face):
+            for i in range(0, CUBE_SIZE):
+                for j in range(0, CUBE_SIZE):
+                    if self.rows[i][j].color != other.rows[i][j].color:
+                        return False
+            return True
+        return False

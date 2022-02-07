@@ -44,6 +44,8 @@ class Solver(object):
                     print(' ', end='', flush=True)
                 for cube in self._rotate_x_times(self.cube, rotations=0, target_rotations=rotations_per_iteration):
                     uniformity_score = cube.get_uniformity_score()
+                    if cube == self.cube:
+                        continue
                     if uniformity_score not in ranked_cubes:
                         ranked_cubes[uniformity_score] = []
                     ranked_cubes[uniformity_score].append(cube)
@@ -53,10 +55,11 @@ class Solver(object):
             if iteration_uniformity_score > best_uniformity_score:
                 best_uniformity_score = iteration_uniformity_score
             elif iteration_uniformity_score <= last_uniformity_score:
+                pass
                 # we weren't able to find a more optimum solution.  To prevent getting stuck in a local optimum,
                 # choose a new cube at random.
-                print('Picking random cube to prevent getting stuck in local optimum.')
-                iteration_uniformity_score = random.choice(list(ranked_cubes.keys()))
+                #print('Picking random cube to prevent getting stuck in local optimum.')
+                #iteration_uniformity_score = random.choice(list(ranked_cubes.keys()))
             self.cube = ranked_cubes[iteration_uniformity_score][0]
             last_uniformity_score = iteration_uniformity_score
             if iterations % 1 == 0:

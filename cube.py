@@ -2,6 +2,7 @@ from face import Face
 from face import Side
 from face import Color
 from face import Rotation
+from face import FACE_COUNT
 from face import Transposition
 from typing import List
 
@@ -86,3 +87,12 @@ class Cube(object):
         print(' ' * 8 + self.faces[5].get_print_row(1))
         print(' ' * 8 + self.faces[5].get_print_row(2))
         print()
+
+    def __eq__(self, other):
+        if isinstance(other, Cube):
+            for i in range(0, FACE_COUNT):
+                if self.faces[i] != other.faces[i]:
+                    return False
+            return True
+        return False
+
