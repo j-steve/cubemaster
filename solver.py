@@ -7,7 +7,7 @@ import random
 _ROTATIONS = [Rotation.LEFT, Rotation.UP, Rotation.COUNTERCLOCKWISE]
 _OFFSETS = [0, 1, 2]
 _MAX_UNIFORMITY_SCORE = 108  # 72 #102
-_MAX_ROTATIONS_PER_STEP = 15  # the largest number of rotations per step we can calculate before running out of memory.
+_MAX_ROTATIONS_PER_STEP = 12  # the largest number of rotations per step we can calculate before running out of memory.
 
 
 class Solver(object):
@@ -37,7 +37,7 @@ class Solver(object):
             iteration_uniformity_score = last_uniformity_score
             ranked_cubes = {}
             print('Rotating: ', end='')
-            while iteration_uniformity_score <= last_uniformity_score and rotations_per_iteration <= _MAX_ROTATIONS_PER_STEP:
+            while iteration_uniformity_score <= last_uniformity_score and rotations_per_iteration < _MAX_ROTATIONS_PER_STEP:
                 rotations_per_iteration += 1
                 print('.', end='')
                 for cube in self._rotate_x_times(self.cube, rotations=0, target_rotations=rotations_per_iteration):
@@ -50,6 +50,11 @@ class Solver(object):
             total_rotations += rotations_per_iteration
             if iteration_uniformity_score > best_uniformity_score:
                 best_uniformity_score = iteration_uniformity_score
+            elif iteration_uniformity_score <= last_uniformity_score:
+                # we weren't able to find a more optimum solution.  To prevent getting stuck in a local optimum,
+                # choose a new cube at random.
+                print('Picking random cube to prevent getting stuck in local optimum.')
+                iteration_uniformity_score = random.choice(list(ranked_cubes.keys()))
             self.cube = ranked_cubes[iteration_uniformity_score][0]
             last_uniformity_score = iteration_uniformity_score
             if iterations % 1 == 0:
