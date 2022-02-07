@@ -7,7 +7,7 @@ import random
 _ROTATIONS = [Rotation.LEFT, Rotation.UP, Rotation.COUNTERCLOCKWISE]
 _OFFSETS = [0, 1, 2]
 _MAX_UNIFORMITY_SCORE = 108  # 72 #102
-_MAX_ROTATIONS_PER_STEP = 12  # the largest number of rotations per step we can calculate before running out of memory.
+_MAX_ROTATIONS_PER_STEP = 14  # the largest number of rotations per step we can calculate before running out of memory.
 
 
 class Solver(object):
@@ -36,10 +36,12 @@ class Solver(object):
             rotations_per_iteration = 0
             iteration_uniformity_score = last_uniformity_score
             ranked_cubes = {}
-            print('Rotating: ', end='')
+            print('Rotating: ', end='', flush=True)
             while iteration_uniformity_score <= last_uniformity_score and rotations_per_iteration < _MAX_ROTATIONS_PER_STEP:
                 rotations_per_iteration += 1
-                print('.', end='')
+                print('.', end='', flush=True)
+                if rotations_per_iteration % 5 == 0:
+                    print(' ', end='', flush=True)
                 for cube in self._rotate_x_times(self.cube, rotations=0, target_rotations=rotations_per_iteration):
                     uniformity_score = cube.get_uniformity_score()
                     if uniformity_score not in ranked_cubes:
