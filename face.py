@@ -52,6 +52,9 @@ class Pixel(object):
             return self.color == other.color
         return False
 
+    def __hash__(self):
+        return hash(self.color)
+
 
 def _invert_offset(offset):
     if offset == 0:
@@ -173,3 +176,10 @@ class Face(object):
                         return False
             return True
         return False
+
+    def __hash__(self):
+        colors = ''
+        for i in range(0, CUBE_SIZE):
+            for j in range(0, CUBE_SIZE):
+                colors += str(self.rows[i][j].color.value)
+        return hash(colors)

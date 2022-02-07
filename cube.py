@@ -96,3 +96,6 @@ class Cube(object):
             return True
         return False
 
+    def __hash__(self):
+        return hash(tuple(self.faces))
+

@@ -31,12 +31,14 @@ class Solver(object):
         total_rotations = 0
         total_rotate_calc_time = 0
         risk_tolerance = 0.0
+        seen_cubes = set()
         while iterations < 1000000000000000:
             iterations += 1
             rotations_per_iteration = 0
             iteration_uniformity_score = last_uniformity_score
             ranked_cubes = {}
             print('Rotating: ', end='', flush=True)
+            start_time = time.time()
             while iteration_uniformity_score <= last_uniformity_score and rotations_per_iteration < _MAX_ROTATIONS_PER_STEP:
                 rotations_per_iteration += 1
                 print('.', end='', flush=True)
@@ -44,12 +46,13 @@ class Solver(object):
                     print(' ', end='', flush=True)
                 for cube in self._rotate_x_times(self.cube, rotations=0, target_rotations=rotations_per_iteration):
                     uniformity_score = cube.get_uniformity_score()
-                    if cube == self.cube:
+                    if cube in seen_cubes:
                         continue
                     if uniformity_score not in ranked_cubes:
                         ranked_cubes[uniformity_score] = []
                     ranked_cubes[uniformity_score].append(cube)
                 iteration_uniformity_score = max(ranked_cubes.keys())
+            end_time = time.time()
             print()
             total_rotations += rotations_per_iteration
             if iteration_uniformity_score > best_uniformity_score:
@@ -61,14 +64,16 @@ class Solver(object):
                 #print('Picking random cube to prevent getting stuck in local optimum.')
                 #iteration_uniformity_score = random.choice(list(ranked_cubes.keys()))
             self.cube = ranked_cubes[iteration_uniformity_score][0]
+            seen_cubes.add(self.cube)
             last_uniformity_score = iteration_uniformity_score
             if iterations % 1 == 0:
+                cubes_evaled = sum(len(x) for x in ranked_cubes.values())
                 print(
-                    'Iteration #%s | (%s rotations | %s rotations/iteration | uniformity %i%% | best %i%% | initial %i%%)' % (
-                        iterations, total_rotations, rotations_per_iteration,
+                    'Iteration #%s | (%s rotations | %s rotations/iteration | %s cubes evaluated | uniformity %i%% | best %i%% | initial %i%% | speed %.2gms)' % (
+                        iterations, total_rotations, rotations_per_iteration, cubes_evaled,
                         iteration_uniformity_score / _MAX_UNIFORMITY_SCORE * 100,
                         best_uniformity_score / _MAX_UNIFORMITY_SCORE * 100,
-                        initial_uniformity_score / _MAX_UNIFORMITY_SCORE * 100))
+                        initial_uniformity_score / _MAX_UNIFORMITY_SCORE * 100, (end_time - start_time) / cubes_evaled * 1000))
                 self.cube.print()
             if uniformity_score == _MAX_UNIFORMITY_SCORE:
                 print("Solved in %s", iterations)
