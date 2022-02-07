@@ -24,7 +24,6 @@ class Rotation(Enum):
     def inverse(self):
         return Rotation(-self.value)
 
-
 class Color(Enum):
     GREEN = 0
     BLUE = 1
@@ -32,6 +31,11 @@ class Color(Enum):
     PURPLE = 3
     WHITE = 4
     YELLOW = 5
+
+
+class Transposition(Enum):
+    CLOCKWISE = 1
+    COUNTERCLOCKWISE = -1
 
 
 class Pixel(object):
@@ -105,6 +109,29 @@ class Face(object):
             pixels.reverse()
         for i in range(0, CUBE_SIZE):
             self.rows[i][column_num] = pixels[i]
+
+    def transpose(self, direction: Transposition):
+        toprow = list(self.rows[0])
+        if direction == Transposition.CLOCKWISE:
+            self.rows[0][0] = self.rows[2][0]
+            self.rows[0][1] = self.rows[1][0]
+            self.rows[0][2] = toprow[0]
+            self.rows[1][0] = self.rows[2][1]
+            self.rows[2][0] = self.rows[2][2]
+            self.rows[2][1] = self.rows[1][2]
+            self.rows[2][2] = toprow[2]
+            self.rows[1][2] = toprow[1]
+        elif direction == Transposition.COUNTERCLOCKWISE:
+            self.rows[0][0] = self.rows[0][2]
+            self.rows[0][1] = self.rows[1][2]
+            self.rows[0][2] = self.rows[2][2]
+            self.rows[1][2] = self.rows[2][1]
+            self.rows[2][2] = self.rows[2][0]
+            self.rows[2][1] = self.rows[1][0]
+            self.rows[2][0] = toprow[0]
+            self.rows[1][0] = toprow[1]
+        else:
+            raise ValueError('Invalid direction value %s', direction)
 
 
     def get_uniformity_score(self):

@@ -2,6 +2,7 @@ from face import Face
 from face import Side
 from face import Color
 from face import Rotation
+from face import Transposition
 from typing import List
 
 
@@ -21,6 +22,10 @@ class Cube(object):
             self[Side.RIGHT].set_row(offset, self[Side.BACK].get_row(offset))
             self[Side.BACK].set_row(offset, self[Side.LEFT].get_row(offset))
             self[Side.LEFT].set_row(offset, front_row)
+            if offset == 0:
+                self[Side.TOP].transpose(Transposition.CLOCKWISE)
+            elif offset == 2:
+                self[Side.BOTTOM].transpose(Transposition.COUNTERCLOCKWISE)
         if direction == Rotation.RIGHT:
             for i in range(0, 3):
                 self.rotate(Rotation.LEFT, offset)
@@ -30,6 +35,10 @@ class Cube(object):
             self[Side.BOTTOM].set_column(offset, self[Side.BACK].get_column(offset))
             self[Side.BACK].set_column(offset, self[Side.TOP].get_column(offset))
             self[Side.TOP].set_column(offset, front_col)
+            if offset == 0:
+                self[Side.LEFT].transpose(Transposition.COUNTERCLOCKWISE)
+            elif offset == 2:
+                self[Side.RIGHT].transpose(Transposition.CLOCKWISE)
         if direction == Rotation.DOWN:
             for i in range(0, 3):
                 self.rotate(Rotation.UP, offset)
@@ -39,6 +48,10 @@ class Cube(object):
             self[Side.BOTTOM].set_row(offset, self[Side.LEFT].get_column(offset))
             self[Side.LEFT].set_column(offset, self[Side.TOP].get_row(offset))
             self[Side.TOP].set_row(offset, rightcol)
+            if offset == 0:
+                self[Side.FRONT].transpose(Transposition.COUNTERCLOCKWISE)
+            elif offset == 2:
+                self[Side.BACK].transpose(Transposition.CLOCKWISE)
         if direction == Rotation.CLOCKWISE:
             for i in range(0, 3):
                 self.rotate(Rotation.COUNTERCLOCKWISE, offset)
